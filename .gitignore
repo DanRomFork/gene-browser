@@ -1,0 +1,20 @@
+# General
+.DS_Store
+
+## Build
+.idea
+.vscode
+.bsp
+.bloop
+.metals
+project/project/
+project/metals.sbt
+**/target
+/helm/**/Chart.lock
+/helm/**/files/shared/cql/
+/helm/**/charts/*.tgz
+/helm-new/**/Chart.lock
+/helm-new/**/files/shared/cql/
+/helm-new/**/charts/*.tgz
+/coverage/
+local-cache-tmp/
