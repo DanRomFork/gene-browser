@@ -4,6 +4,17 @@ ThisBuild / organization := "tbd"
 ThisBuild / scalaVersion := "3.7.4"
 ThisBuild / version := "0.1.0"
 
+enablePlugins(JavaAppPackaging, DockerPlugin)
+
+dockerBaseImage := "eclipse-temurin:17-jre"
+dockerExposedPorts := Seq(8080)
+Docker / packageName := "gene-browser"
+Docker / version := version.value
+// Use environment variable, fallback to empty (will be set at build time)
+dockerRepository := sys.env.get("DOCKER_REGISTRY").orElse(Some("ghcr.io"))
+  .flatMap(registry => sys.env.get("GITHUB_REPOSITORY").map(repo => s"$registry/$repo"))
+dockerUpdateLatest := true
+
 val modulesFolder = "app"
 
 val commonSettings = Seq(
