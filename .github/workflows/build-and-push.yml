@@ -51,6 +51,5 @@ jobs:
 
       - name: Push Docker image
         run: |
-          IMAGE_LOWER=$(echo "${{ env.REGISTRY }}/${{ github.repository }}/gene-browser:latest" | tr '[:upper:]' '[:lower:]')
-          docker tag ${{ env.REGISTRY }}/${{ github.repository }}/gene-browser:latest $IMAGE_LOWER
-          docker push $IMAGE_LOWER
+          IMAGE_NAME=$(echo "${{ env.REGISTRY }}/${{ github.repository }}/gene-browser:latest" | tr '[:upper:]' '[:lower:]')
+          docker push $IMAGE_NAME
