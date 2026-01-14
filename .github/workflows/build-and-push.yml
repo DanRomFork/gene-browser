@@ -40,7 +40,10 @@ jobs:
         env:
           DOCKER_REGISTRY: ${{ env.REGISTRY }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-        run: sbt Docker/publishLocal
+        run: |
+          curl -Ls https://git.io/sbt > sbt
+          chmod +x sbt
+          ./sbt Docker/publishLocal
 
       - name: Push Docker image
         run: |
