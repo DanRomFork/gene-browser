@@ -9,7 +9,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/${{ github.event.repository.name }}
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-and-push:
@@ -19,6 +19,10 @@ jobs:
       packages: write
 
     steps:
+      - name: Convert repo name to lowercase
+        id: lowercase
+        run: echo "repo_name_lc=${GITHUB_REPOSITORY##*/}" | tr '[:upper:]' '[:lower:]' >> $GITHUB_ENV
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -42,11 +46,10 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           curl -Ls https://git.io/sbt > sbt
-          chmod +x sbt
-          GITHUB_REPOSITORY_LOWER=$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')
-          export GITHUB_REPOSITORY=$GITHUB_REPOSITORY_LOWER
+          chmod +x sbt          
+          export GITHUB_REPOSITORY=${repo_name_lc}
           ./sbt Docker/publishLocal
 
       - name: Push Docker image
         run: |
-          docker push ${{ env.REGISTRY }}/${{ github.repository }}/gene-browser:latest
+          docker push ${{ env.REGISTRY }}/${repo_name_lc}/gene-browser:latest
