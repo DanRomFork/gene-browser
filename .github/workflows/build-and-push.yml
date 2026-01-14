@@ -47,9 +47,10 @@ jobs:
         run: |
           curl -Ls https://git.io/sbt > sbt
           chmod +x sbt          
-          export GITHUB_REPOSITORY=${repo_name_lc}
           ./sbt Docker/publishLocal
 
       - name: Push Docker image
         run: |
-          docker push ${{ env.REGISTRY }}/${repo_name_lc}/gene-browser:latest
+          IMAGE_LOWER=$(echo "${{ env.REGISTRY }}/${{ github.repository }}/gene-browser:latest" | tr '[:upper:]' '[:lower:]')
+          docker tag ${{ env.REGISTRY }}/${{ github.repository }}/gene-browser:latest $IMAGE_LOWER
+          docker push $IMAGE_LOWER
