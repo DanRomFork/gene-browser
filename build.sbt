@@ -4,20 +4,6 @@ ThisBuild / organization := "tbd"
 ThisBuild / scalaVersion := "3.7.4"
 ThisBuild / version := "0.1.0"
 
-enablePlugins(JavaAppPackaging, DockerPlugin)
-
-dockerBaseImage := "eclipse-temurin:17-jre"
-dockerExposedPorts := Seq(8080)
-Docker / packageName := "gene-browser"
-Docker / version := version.value
-// Use environment variable, fallback to empty (will be set at build time)
-dockerRepository := {
-  val registry = sys.env.getOrElse("DOCKER_REGISTRY", "ghcr.io")
-  val repo = sys.env.getOrElse("GITHUB_REPOSITORY", "")
-  if (repo.isEmpty) None else Some(s"$registry/$repo".toLowerCase)
-}
-
-dockerUpdateLatest := true
 
 val modulesFolder = "app"
 
@@ -42,6 +28,7 @@ lazy val `gene-browser-service` = project
   .in(file(s"$modulesFolder/service"))
   .settings(name := "gene-browser-service")
   .settings(commonSettings)
+  .enablePlugins(JavaAppPackaging, DockerPlugin)
   .settings(
     libraryDependencies ++= Seq(
       "org.typelevel" %% "cats-effect" % "3.5.4",
@@ -57,5 +44,15 @@ lazy val `gene-browser-service` = project
       "com.typesafe" % "config" % "1.4.3",
       "org.scalatest" %% "scalatest" % "3.2.19" % Test
     ),
-    Compile / mainClass := Some("Main")
+    Compile / mainClass := Some("tbd.genebrowser.Main"),
+    Docker / packageName := "gene-browser",
+    Docker / version := version.value,
+    dockerBaseImage := "eclipse-temurin:17-jre",
+    dockerExposedPorts := Seq(8080),
+    dockerRepository := {
+      val registry = sys.env.getOrElse("DOCKER_REGISTRY", "ghcr.io")
+      val repo = sys.env.getOrElse("GITHUB_REPOSITORY", "")
+      if (repo.isEmpty) None else Some(s"$registry/$repo".toLowerCase)
+    },
+    dockerUpdateLatest := true
   )

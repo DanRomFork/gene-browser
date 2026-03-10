@@ -53,7 +53,7 @@ jobs:
         run: |
           curl -Ls https://git.io/sbt > sbt
           chmod +x sbt          
-          ./sbt Docker/publishLocal
+          ./sbt "project gene-browser-service" Docker/publishLocal
 
       - name: Push Docker image
         run: |
