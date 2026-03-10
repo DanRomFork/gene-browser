@@ -54,7 +54,8 @@ lazy val `gene-browser-service` = project
       "org.typelevel" %% "cats-effect" % "3.5.4",
       "com.github.pureconfig" %% "pureconfig-core" % "0.17.6",
       "com.github.pureconfig" %% "pureconfig-cats-effect" % "0.17.6",
-      "com.typesafe" % "config" % "1.4.3"
+      "com.typesafe" % "config" % "1.4.3",
+      "org.scalatest" %% "scalatest" % "3.2.19" % Test
     ),
     Compile / mainClass := Some("Main")
   )
