@@ -61,7 +61,7 @@ services:
       - gene-browser-network
 
   gene-browser-service:
-    image: ghcr.io/danromfork/gene-browser/gene-browser:latest
+    image: ${SERVICE_IMAGE:-ghcr.io/danromfork/gene-browser/gene-browser:latest}
     container_name: gene-browser-service
     entrypoint: ["java", "-cp", "/opt/docker/lib/*", "tbd.genebrowser.Main"]
     depends_on:

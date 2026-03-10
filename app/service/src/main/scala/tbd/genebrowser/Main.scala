@@ -11,7 +11,8 @@ object Main extends IOApp.Simple:
       rawConfig <- IO.blocking(ConfigFactory.load())
       appConfig <- AppConfig.load[IO](rawConfig)
       _         <- runMigrations(appConfig.database)
-      _         <- IO.println("Hello, World!")
+      _         <- IO.println("Service started successfully.")
+      _         <- IO.never
     } yield ()
 
   private def runMigrations(dbConfig: DatabaseConfig): IO[Unit] = IO.blocking {
