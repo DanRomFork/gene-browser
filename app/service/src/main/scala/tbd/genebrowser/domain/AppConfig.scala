@@ -7,7 +7,9 @@ import pureconfig.generic.derivation.default.*
 import pureconfig.module.catseffect.syntax.*
 
 final case class AppConfig(
-    database: DatabaseConfig
+    database: DatabaseConfig,
+    http: HttpConfig,
+    pagination: PaginationConfig
 ) derives ConfigReader
 
 object AppConfig:

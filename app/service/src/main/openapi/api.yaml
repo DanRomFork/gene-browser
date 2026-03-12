@@ -1,0 +1,179 @@
+openapi: 3.0.3
+info:
+  title: Gene Browser API
+  version: 0.1.0
+
+paths:
+  /species:
+    get:
+      operationId: getSpecies
+      tags: [GeneBrowser]
+      summary: Get list of all species with their latin names and TSNs
+      responses:
+        "200":
+          description: List of species
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SpeciesInfo"
+
+  /chromosomes:
+    get:
+      operationId: getChromosomes
+      tags: [GeneBrowser]
+      summary: Get list of chromosomes for a species identified by TSN
+      parameters:
+        - name: tsn
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: List of chromosomes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChromosomeInfo"
+
+  /base-pairs:
+    get:
+      operationId: getBasePairs
+      tags: [GeneBrowser]
+      summary: Get paginated list of base pairs by TSN and chromosome index
+      parameters:
+        - name: tsn
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: chromosomeIndex
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: List of base pairs (window size 100000)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BasePairInfo"
+
+  /genes:
+    get:
+      operationId: getGenes
+      tags: [GeneBrowser]
+      summary: Get list of genes by TSN, chromosome index, and position range
+      parameters:
+        - name: tsn
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: chromosomeIndex
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: startPosition
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: stopPosition
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: List of genes within the position range
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GeneInfo"
+
+components:
+  schemas:
+    SpeciesInfo:
+      type: object
+      required:
+        - scientificName
+        - tsn
+      properties:
+        scientificName:
+          type: string
+        tsn:
+          type: integer
+          format: int32
+
+    ChromosomeInfo:
+      type: object
+      required:
+        - id
+        - index
+      properties:
+        id:
+          type: integer
+          format: int64
+        index:
+          type: integer
+          format: int32
+
+    BasePairInfo:
+      type: object
+      required:
+        - id
+        - position
+        - leftNucleotide
+        - rightNucleotide
+      properties:
+        id:
+          type: integer
+          format: int64
+        position:
+          type: integer
+          format: int64
+        leftNucleotide:
+          type: string
+        rightNucleotide:
+          type: string
+
+    GeneInfo:
+      type: object
+      required:
+        - id
+        - startPosition
+        - stopPosition
+      properties:
+        id:
+          type: integer
+          format: int64
+        startPosition:
+          type: integer
+          format: int64
+        stopPosition:
+          type: integer
+          format: int64

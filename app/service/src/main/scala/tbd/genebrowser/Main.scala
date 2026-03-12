@@ -1,9 +1,15 @@
 package tbd.genebrowser
 
-import cats.effect.{ IO, IOApp }
+import cats.effect.{IO, IOApp}
 import com.typesafe.config.ConfigFactory
-import tbd.genebrowser.domain.{ AppConfig, DatabaseConfig }
+import doobie.hikari.HikariTransactor
 import org.flywaydb.core.Flyway
+import org.http4s.ember.server.EmberServerBuilder
+import org.http4s.server.Server
+import tbd.genebrowser.api.{Resource => ApiResource}
+import tbd.genebrowser.dao.*
+import tbd.genebrowser.domain.{AppConfig, DatabaseConfig}
+import tbd.genebrowser.handler.GeneBrowserHandlerImpl
 
 object Main extends IOApp.Simple:
   def run: IO[Unit] =
@@ -11,9 +17,32 @@ object Main extends IOApp.Simple:
       rawConfig <- IO.blocking(ConfigFactory.load())
       appConfig <- AppConfig.load[IO](rawConfig)
       _         <- runMigrations(appConfig.database)
-      _         <- IO.println("Service started successfully.")
-      _         <- IO.never
+      _         <- createServer(appConfig).useForever
     } yield ()
+
+  private def createServer(config: AppConfig): cats.effect.Resource[IO, Server] =
+    for {
+      xa <- HikariTransactor.newHikariTransactor[IO](
+        "org.postgresql.Driver",
+        s"jdbc:postgresql://${config.database.host}:${config.database.port}/${config.database.name}",
+        config.database.user,
+        config.database.password,
+        scala.concurrent.ExecutionContext.global
+      )
+      handler = GeneBrowserHandlerImpl[IO](
+        SpeciesDao.make[IO](xa),
+        ChromosomeDao.make[IO](xa),
+        BasePairDao.make[IO](xa, config.pagination.basePairsWindowSize),
+        GeneDao.make[IO](xa)
+      )
+      routes = new ApiResource[IO]().routes(handler)
+      server <- EmberServerBuilder
+        .default[IO]
+        .withHost(config.http.host)
+        .withPort(config.http.port)
+        .withHttpApp(routes.orNotFound)
+        .build
+    } yield server
 
   private def runMigrations(dbConfig: DatabaseConfig): IO[Unit] = IO.blocking {
     val url       = s"jdbc:postgresql://${dbConfig.host}:${dbConfig.port}/${dbConfig.name}"
