@@ -11,7 +11,8 @@ val circeVersion  = "0.14.10"
 
 val commonSettings = Seq(
   fork := true,
-  packageDoc / publishArtifact := false
+  packageDoc / publishArtifact := false,
+  scalacOptions += "-Wconf:src=src_managed/.*:silent"
 )
 
 lazy val root = project
