@@ -1,4 +1,4 @@
-package tbd.genebrowser.dao
+package juntendouniversity.genebrowser.dao
 
 import cats.effect.kernel.Async
 import doobie.*

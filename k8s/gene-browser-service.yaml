@@ -18,7 +18,7 @@ spec:
         image: ghcr.io/danromfork/gene-browser/gene-browser:latest
         imagePullPolicy: Always
         command: ["java"]
-        args: ["-cp", "/opt/docker/lib/*", "tbd.genebrowser.Main"]
+        args: ["-cp", "/opt/docker/lib/*", "juntendouniversity.genebrowser.Main"]
         ports:
         - containerPort: 8080
         env:

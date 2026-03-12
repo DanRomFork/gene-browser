@@ -1,4 +1,4 @@
-package tbd.genebrowser.domain
+package juntendouniversity.genebrowser.domain
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -7,11 +7,11 @@ class DatabaseConfigTest extends AnyFlatSpec with Matchers:
 
   "DatabaseConfig" should "have all required fields" in {
     val config = DatabaseConfig(
-      host              = "localhost",
-      port              = 5432,
-      name              = "testdb",
-      user              = "testuser",
-      password          = "testpass",
+      host                = "localhost",
+      port                = 5432,
+      name                = "testdb",
+      user                = "testuser",
+      password            = "testpass",
       migrationsLocations = List("db/migration")
     )
 
@@ -26,11 +26,11 @@ class DatabaseConfigTest extends AnyFlatSpec with Matchers:
 
   "DatabaseConfig" should "handle multiple migration locations" in {
     val config = DatabaseConfig(
-      host              = "localhost",
-      port              = 5432,
-      name              = "testdb",
-      user              = "testuser",
-      password          = "testpass",
+      host                = "localhost",
+      port                = 5432,
+      name                = "testdb",
+      user                = "testuser",
+      password            = "testpass",
       migrationsLocations = List("db/migration", "migration")
     )
 
@@ -40,11 +40,11 @@ class DatabaseConfigTest extends AnyFlatSpec with Matchers:
 
   "DatabaseConfig" should "have valid port number" in {
     val config = DatabaseConfig(
-      host              = "localhost",
-      port              = 5432,
-      name              = "testdb",
-      user              = "testuser",
-      password          = "testpass",
+      host                = "localhost",
+      port                = 5432,
+      name                = "testdb",
+      user                = "testuser",
+      password            = "testpass",
       migrationsLocations = List.empty
     )
 

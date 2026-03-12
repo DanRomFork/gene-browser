@@ -1,4 +1,4 @@
-package tbd.genebrowser.domain
+package juntendouniversity.genebrowser.domain
 
 import pureconfig.*
 import pureconfig.generic.derivation.default.*

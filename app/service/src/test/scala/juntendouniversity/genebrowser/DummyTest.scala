@@ -1,4 +1,4 @@
-package tbd.genebrowser
+package juntendouniversity.genebrowser
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers

@@ -1,10 +1,10 @@
-package tbd.genebrowser.handler
+package juntendouniversity.genebrowser.handler
 
 import cats.Monad
 import cats.syntax.all.*
-import tbd.genebrowser.api.{Handler, Resource}
-import tbd.genebrowser.api.definitions.*
-import tbd.genebrowser.dao.*
+import juntendouniversity.genebrowser.api.{ Handler, Resource }
+import juntendouniversity.genebrowser.api.definitions.*
+import juntendouniversity.genebrowser.dao.*
 
 class GeneBrowserHandlerImpl[F[_]: Monad](
     speciesDao: SpeciesDao[F],
@@ -31,21 +31,33 @@ class GeneBrowserHandlerImpl[F[_]: Monad](
       respond: Resource.GetBasePairsResponse.type
   )(tsn: Int, chromosomeIndex: Int, offset: Option[Long]): F[Resource.GetBasePairsResponse] =
     basePairDao.findByChromosome(tsn, chromosomeIndex, offset.getOrElse(0L)).map { rows =>
-      respond.Ok(rows.map(r => BasePairInfo(
-        id = r.id,
-        position = r.position,
-        leftNucleotide = r.leftNucleotide,
-        rightNucleotide = r.rightNucleotide
-      )).toVector)
+      respond.Ok(
+        rows
+          .map(r =>
+            BasePairInfo(
+              id              = r.id,
+              position        = r.position,
+              leftNucleotide  = r.leftNucleotide,
+              rightNucleotide = r.rightNucleotide
+            )
+          )
+          .toVector
+      )
     }
 
   override def getGenes(
       respond: Resource.GetGenesResponse.type
   )(tsn: Int, chromosomeIndex: Int, startPosition: Long, stopPosition: Long): F[Resource.GetGenesResponse] =
     geneDao.findByRegion(tsn, chromosomeIndex, startPosition, stopPosition).map { rows =>
-      respond.Ok(rows.map(r => GeneInfo(
-        id = r.id,
-        startPosition = r.startPosition,
-        stopPosition = r.stopPosition
-      )).toVector)
+      respond.Ok(
+        rows
+          .map(r =>
+            GeneInfo(
+              id            = r.id,
+              startPosition = r.startPosition,
+              stopPosition  = r.stopPosition
+            )
+          )
+          .toVector
+      )
     }

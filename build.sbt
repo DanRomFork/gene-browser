@@ -1,6 +1,6 @@
 import sbt._
 
-ThisBuild / organization := "tbd"
+ThisBuild / organization := "juntendouniversity"
 ThisBuild / scalaVersion := "3.7.4"
 ThisBuild / version := "0.1.0"
 
@@ -42,7 +42,7 @@ lazy val `gene-browser-service` = project
       "com.github.pureconfig" %% "pureconfig-core" % "0.17.6",
       "com.github.pureconfig" %% "pureconfig-cats-effect" % "0.17.6",
       "org.http4s"    %% "http4s-dsl" % http4sVersion,
-      "org.http4s"    %% "http4s-ember-server" % http4sVersion,
+      "org.http4s"    %% "http4s-blaze-server" % "0.23.17",
       "org.http4s"    %% "http4s-client" % http4sVersion,
       "org.http4s"    %% "http4s-circe" % http4sVersion,
       "io.circe"      %% "circe-core" % circeVersion,
@@ -53,11 +53,11 @@ lazy val `gene-browser-service` = project
     Compile / guardrailTasks := List(
       ScalaServer(
         file(s"$modulesFolder/service/src/main/openapi/api.yaml"),
-        pkg = "tbd.genebrowser.api",
+        pkg = "juntendouniversity.genebrowser.api",
         framework = "http4s"
       )
     ),
-    Compile / mainClass := Some("tbd.genebrowser.Main"),
+    Compile / mainClass := Some("juntendouniversity.genebrowser.Main"),
     Docker / packageName := "gene-browser",
     Docker / version := version.value,
     dockerBaseImage := "eclipse-temurin:17-jre",
@@ -69,3 +69,19 @@ lazy val `gene-browser-service` = project
     },
     dockerUpdateLatest := true
   )
+
+lazy val integrationTests = project
+  .in(file(s"$modulesFolder/integration-tests"))
+  .settings(name := "integration-tests")
+  .settings(commonSettings)
+  .dependsOn(`gene-browser-service`)
+  .settings(
+    libraryDependencies ++= Seq(
+      "org.scalatest" %% "scalatest" % "3.2.19" % Test,
+      "org.http4s"    %% "http4s-ember-client" % http4sVersion % Test
+    ),
+    publish / skip := true
+  )
+
+addCommandAlias("integrationTest", "integrationTests/test")
+addCommandAlias("compileAll", "gene-browser-service/compile; gene-browser-service/Test/compile; integrationTests/Test/compile")

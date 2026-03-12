@@ -1,15 +1,15 @@
-package tbd.genebrowser
+package juntendouniversity.genebrowser
 
-import cats.effect.{IO, IOApp}
+import cats.effect.{ IO, IOApp }
 import com.typesafe.config.ConfigFactory
 import doobie.hikari.HikariTransactor
 import org.flywaydb.core.Flyway
-import org.http4s.ember.server.EmberServerBuilder
+import org.http4s.blaze.server.BlazeServerBuilder
 import org.http4s.server.Server
-import tbd.genebrowser.api.{Resource => ApiResource}
-import tbd.genebrowser.dao.*
-import tbd.genebrowser.domain.{AppConfig, DatabaseConfig}
-import tbd.genebrowser.handler.GeneBrowserHandlerImpl
+import juntendouniversity.genebrowser.api.{ Resource => ApiResource }
+import juntendouniversity.genebrowser.dao.*
+import juntendouniversity.genebrowser.domain.{ AppConfig, DatabaseConfig }
+import juntendouniversity.genebrowser.handler.GeneBrowserHandlerImpl
 
 object Main extends IOApp.Simple:
   def run: IO[Unit] =
@@ -36,12 +36,10 @@ object Main extends IOApp.Simple:
         GeneDao.make[IO](xa)
       )
       routes = new ApiResource[IO]().routes(handler)
-      server <- EmberServerBuilder
-        .default[IO]
-        .withHost(config.http.host)
-        .withPort(config.http.port)
+      server <- BlazeServerBuilder[IO]
+        .bindHttp(config.http.port.value, config.http.host.toString)
         .withHttpApp(routes.orNotFound)
-        .build
+        .resource
     } yield server
 
   private def runMigrations(dbConfig: DatabaseConfig): IO[Unit] = IO.blocking {

@@ -1,4 +1,4 @@
-package tbd.genebrowser.domain
+package juntendouniversity.genebrowser.domain
 
 import cats.effect.Sync
 import com.typesafe.config.Config
