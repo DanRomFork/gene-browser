@@ -1,13 +1,16 @@
 name: Integration Tests
 
 on:
-  push:
-  pull_request:
+  workflow_run:
+    workflows: ["Build and Push Docker Image"]
+    types:
+      - completed
   workflow_dispatch:
 
 jobs:
   integration-tests:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: read
       packages: read
